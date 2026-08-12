@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+pydicom
+minio
+numpy
+pillow
+airflow
+python-dotenv
