@@ -1,9 +1,11 @@
 from fastapi import APIRouter, UploadFile, File
 import os
 from dicom.dicom_reader import DICOMReader
+from storage.minio_client import MinioClient
 
 router = APIRouter()
 reader = DICOMReader()
+minio = MinioClient()
 
 UPLOAD_DIR = "temp_uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
@@ -19,6 +21,9 @@ async def upload_dicom(file: UploadFile = File(...)):
     with open(file_path, "wb") as f:
         f.write(await file.read())
 
+    # Subir a MinIO
+    minio.upload_file("dicom-raw", file.filename, file_path)
+
     # Procesar DICOM
     ds = reader.load_dicom(file_path)
     metadata = reader.extract_metadata(ds)
@@ -28,5 +33,5 @@ async def upload_dicom(file: UploadFile = File(...)):
         "filename": file.filename,
         "metadata": metadata,
         "image_shape": pixel_array.shape,
-        "message": "DICOM procesado correctamente"
+        "message": "DICOM procesado y subido a MinIO correctamente"
     }

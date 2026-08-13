@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from app.routers.upload_router import router as upload_router
 from app.routers.classify_router import router as classify_router
 from app.routers.diagnose_router import router as diagnose_router
+from dotenv import load_dotenv
+load_dotenv()
 
 app = FastAPI(
     title="Medical Diagnosis Platform",
